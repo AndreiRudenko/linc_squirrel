@@ -1,7 +1,5 @@
 package squirrel;
 
-import squirrel.SQVM;
-
 @:keep
 @:include('linc_squirrel.h')
 #if !display
@@ -484,27 +482,12 @@ private class SQ_helper {
 
 }
 
-/*
 @:include('linc_squirrel.h')
 @:native('::cpp::Reference<SQVM>')
 private extern class SQVM {}
 typedef HSQUIRRELVM = SQVM;
 
-// Anon_obj from hxcpp
-@:include('hxcpp.h')
-@:native('hx::Anon')
-private extern class Anon {
-
-    @:native('hx::Anon_obj::Create')
-    public static function create() : Anon_obj;
-
-    @:native('hx::Anon_obj::Add')
-    public function Add(k:String, v:Dynamic):Void;
-}
-typedef Anon_obj = Anon;
-*/
 typedef SQRESULT = Int;
-
 
 @:enum
 abstract SQObjectType(Int)

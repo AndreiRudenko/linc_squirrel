@@ -1,57 +1,82 @@
 import squirrel.SQ;
 import squirrel.SQstd;
-import wrapper.Squirrel;
 
 class Test {
 
     static function main() {
-    	var squirrel:Squirrel = new Squirrel();
-        squirrel.loadLibs();
+        callFunction();
+        testCallback();
+    }
 
-        // SQ_helper.stackDump(squirrel.vm);
+    static function callFunction() {
+        trace("Test calling Function");
 
-        trace("Squirrel version : " + Squirrel.version);
-    	trace("Float precision : " + squirrel.getVar("_floatsize_"));
+        var v:HSQUIRRELVM = SQ.open(1024); //creates a VM with initial stack size 1024
+        trace("Create Squirrel VM");
+        trace("version: " + SQ.getversion());
+        SQ.pushroottable(v); //push the root table(were the globals of the script will be stored)
+        SQstd.seterrorhandlers(v); //registers the default error handlers
+        SQ.setprintfunc(v); //sets the print function
 
-        trace(squirrel.execute('return true', true));
-        trace(squirrel.execute('return false', true));
-        trace(squirrel.execute('return 123', true));
-        trace(squirrel.execute('return 12.57', true));
-        trace(squirrel.execute('return "this is string"', true));
-        trace(squirrel.execute('return [1, 3.5, 123, "some string", [754, 12.23, "some string"]]', true));
-        trace(squirrel.execute('return {a = 123, b = "some text", c = 53.67, d = [1,2,3,4]}', true));
+        // do stuff
+        SQstd.dofile(v, "script.nut", false, true); // load compile and run script
 
-        // callbacks
-        squirrel.setFunction(
-            "callBack", 
+        // this is equivalent to the following Squirrel code
+        // foo(1,2.0,”three”);
+        SQ.pushroottable(v);
+        SQ.pushstring(v, "foo", -1);
+        SQ.get(v,-2); //get the function from the root table
+        SQ.pushroottable(v); //’this’ (function environment object)
+        SQ.pushinteger(v, 1);
+        SQ.pushfloat(v, 2.0);
+        SQ.pushstring(v, "three", -1);
+        SQ.call(v, 4, false, true);
+        SQ.pop(v, 2); //pops the roottable and the function
+
+
+        SQ.pop(v, 1); //pops the root table
+        SQ.close(v);
+        trace("Close Squirrel VM\n");
+    }
+
+    static function testCallback() {
+        trace("Test Callbacks");
+        
+        var v:HSQUIRRELVM = SQ.open(1024); //creates a VM with initial stack size 1024
+        trace("Create Squirrel VM");
+        trace("version: " + SQ.getversion());
+        SQ.pushroottable(v); //push the root table(were the globals of the script will be stored)
+        SQstd.seterrorhandlers(v); //registers the default error handlers
+        SQ.setprintfunc(v); //sets the print function
+
+        // do stuff
+        SQ.init_callbacks(v); // unofficial API
+        SQ.register( // unofficial API
+            v,
+            "callback", 
             function (a:Float) { 
-                trace("haxe callBack!!!"); 
-                trace(a); 
+                trace("Called callback(), a = " + a); 
                 return a;
             },
-            2, // ?arguments : 1 = 0 arg, 2 = 1 arg;
-            "ts" // ?typecheck : first must be table 't'
+            2, // arguments number: 1 = 0, 2 = 1 arg.
+            "tn" // typecheck: first must be table 't', 'n' = number(Float/Int)
         );
 
-        squirrel.doFile("script.nut");
+        SQ.pushroottable(v);
+        SQ.pushstring(v, "callback", -1);
+        SQ.get(v,-2); //get the function from the root table
+        SQ.pushroottable(v); //’this’ (function environment object)
+        SQ.pushfloat(v, 2.0);
+        SQ.call(v, 2, false, true);
+        SQ.pop(v, 2); //pops the roottable and the function
 
-        squirrel.execute('test()'); // cant return function result
-        
-        trace(squirrel.call('test', null, true));
-        trace(squirrel.call('test2', 845, true));
-        trace(squirrel.call('test2', {"a" : 423.5}, true));
-        trace(squirrel.call('test2', [12], true));
+        SQ.unregister(v, "callback");  // unofficial API
 
-        squirrel.setVar("testvar", 1.618 );
-        trace(squirrel.getVar("testvar"));
-        squirrel.deleteVar("testvar");
-
-        squirrel.removeFunction("callBack");
-
-        // SQ_helper.stackDump(squirrel.vm);
-
-    	squirrel.close();
-
+        SQ.pop(v, 1); //pops the root table
+        SQ.close(v);
+        trace("Close Squirrel VM\n");
     }
+
+
 
 }

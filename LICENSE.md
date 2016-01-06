@@ -1,3 +1,6 @@
+The lib/ folder libraries have their own licenses.
+Be sure to consult those accordingly.
+
 The MIT License (MIT)
 
 Copyright (c) 2015 Sven Bergström   

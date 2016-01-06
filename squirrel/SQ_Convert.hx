@@ -1,6 +1,6 @@
 package squirrel;
 
-import squirrel.SQVM;
+import squirrel.SQ;
 
 class SQ_Convert{
 
