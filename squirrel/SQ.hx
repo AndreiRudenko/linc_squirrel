@@ -1,5 +1,7 @@
 package squirrel;
 
+import squirrel.SQVM;
+
 @:keep
 @:include('linc_squirrel.h')
 #if !display
@@ -10,6 +12,12 @@ extern class SQ {
 
 // Squirrel API
 
+    @:native('SQ_FAILED')
+    static function FAILED(n:Int) : Bool;
+
+    @:native('SQ_SUCCEEDED')
+    static function SUCCEEDED(n:Int) : Bool;
+
 // Virtual Machine
 
     @:native('sq_close')
@@ -18,8 +26,8 @@ extern class SQ {
     // @:native('sq_geterrorfunc')
     // static function geterrorfunc(v:HSQUIRRELVM) : SQPRINTFUNCTION;
 
-    // @:native('sq_getforeignptr')
-    // static function getforeignptr(v:HSQUIRRELVM) : SQUserPointer;
+    @:native('sq_getforeignptr')
+    static function getforeignptr(v:HSQUIRRELVM) : SQUserPointer;
 
     // @:native('sq_getprintfunc')
     // static function getprintfunc(v:HSQUIRRELVM) : SQPRINTFUNCTION;
@@ -54,8 +62,8 @@ extern class SQ {
     @:native('sq_seterrorhandler')
     static function seterrorhandler(v:HSQUIRRELVM) : Void;
 
-    // @:native('sq_setforeignptr')
-    // static function setforeignptr(v:HSQUIRRELVM, p:SQUserPointer) : Void;
+    @:native('sq_setforeignptr')
+    static function setforeignptr(v:HSQUIRRELVM, p:SQUserPointer) : Void;
 
     @:native('linc::squirrel::setprintfunc')
     static function setprintfunc(v:HSQUIRRELVM) : Void;
@@ -85,8 +93,8 @@ extern class SQ {
     @:native('sq_notifyallexceptions')
     static function notifyallexceptions(v:HSQUIRRELVM, enable:Bool) : Void;
 
-    // @:native('sq_setcompilererrorhandler')
-    // static function sq_setcompilererrorhandler(v:HSQUIRRELVM, f:SQCOMPILERERROR) : Void;
+    @:native('linc::squirrel::setcompilererrorhandler')
+    static function setcompilererrorhandler(v:HSQUIRRELVM) : Void;
 
 
 // Stack Operations
@@ -125,13 +133,13 @@ extern class SQ {
     static function createinstance(v:HSQUIRRELVM, idx:Int) : SQRESULT;
 
     @:native('linc::squirrel::getbool')
-    static function getbool(v:HSQUIRRELVM, idx:Int) : Bool; // TODO
+    static function getbool(v:HSQUIRRELVM, idx:Int) : Bool;
 
-    // @:native('sq_getbyhandle')
-    // static function getbyhandle(v:HSQUIRRELVM, idx:Int, handle:HSQMEMBERHANDLE) : SQRESULT; // TODO
+    @:native('linc::squirrel::getbyhandle')
+    static function getbyhandle(v:HSQUIRRELVM, idx:Int, handle:HSQMEMBERHANDLE) : SQRESULT;
 
-    // @:native('sq_getclosureinfo')
-    // static function getclosureinfo(v:HSQUIRRELVM, idx:Int, nparams:SQUnsignedInteger, nfreevars:SQUnsignedInteger) : SQRESULT; // TODO
+    @:native('linc::squirrel::getclosureinfo')
+    static function getclosureinfo(v:HSQUIRRELVM, idx:Int) : SQClosureInfo;
 
     @:native('sq_getclosurename')
     static function getclosurename(v:HSQUIRRELVM, idx:Int) : SQRESULT;
@@ -142,14 +150,14 @@ extern class SQ {
     @:native('sq_gethash')
     static function gethash(v:HSQUIRRELVM, idx:Int) : SQRESULT;
 
-    // @:native('sq_getinstanceup')
-    // static function getinstanceup(v:HSQUIRRELVM, idx:Int, up:SQUserPointer, typetag:SQUserPointer) : SQRESULT;
+    @:native('sq_getinstanceup')
+    static function getinstanceup(v:HSQUIRRELVM, idx:Int, up:SQUserPointer, typetag:SQUserPointer) : SQRESULT;
 
     @:native('linc::squirrel::getinteger')
     static function getinteger(v:HSQUIRRELVM, idx:Int) : Int;
 
-    // @:native('sq_getmemberhandle')
-    // static function getmemberhandle(v:HSQUIRRELVM, idx:Int, handle:HSQMEMBERHANDLE) : SQRESULT;
+    @:native('linc::squirrel::getmemberhandle')
+    static function getmemberhandle(v:HSQUIRRELVM, idx:Int) : HSQMEMBERHANDLE;
 
     @:native('sq_getscratchpad')
     static function getscratchpad(v:HSQUIRRELVM, minsize:Int) : SQRESULT;
@@ -160,20 +168,20 @@ extern class SQ {
     @:native('linc::squirrel::getstring')
     static function getstring(v:HSQUIRRELVM, idx:Int) : String;
 
-    // @:native('sq_getthread')
-    // static function getthread(v:HSQUIRRELVM, idx:Int, v:HSQUIRRELVM) : SQRESULT;
+    @:native('sq_getthread')
+    static function getthread(v:HSQUIRRELVM, idx:Int, v:HSQUIRRELVM) : SQRESULT;
 
     @:native('sq_gettype')
     static function gettype(v:HSQUIRRELVM, idx:Int) : SQObjectType;
 
-    // @:native('sq_gettypetag')
-    // static function gettypetag(v:HSQUIRRELVM, idx:Int, typetag:SQUserPointer) : SQRESULT;
+    @:native('sq_gettypetag')
+    static function gettypetag(v:HSQUIRRELVM, idx:Int, typetag:SQUserPointer) : SQRESULT;
 
-    // @:native('sq_getuserdata')
-    // static function getuserdata(v:HSQUIRRELVM, idx:Int, p:SQUserPointer, typetag:SQUserPointer) : SQRESULT;
+    @:native('sq_getuserdata')
+    static function getuserdata(v:HSQUIRRELVM, idx:Int, p:SQUserPointer, typetag:SQUserPointer) : SQRESULT;
 
-    // @:native('sq_getuserpointer')
-    // static function getuserpointer(v:HSQUIRRELVM, idx:Int, p:SQUserPointer) : SQRESULT;
+    @:native('sq_getuserpointer')
+    static function getuserpointer(v:HSQUIRRELVM, idx:Int, p:SQUserPointer) : SQRESULT;
 
     @:native('sq_newarray')
     static function newarray(v:HSQUIRRELVM, sq_getsize:Int) : Void;
@@ -205,17 +213,17 @@ extern class SQ {
     @:native('sq_pushstring')
     static function pushstring(v:HSQUIRRELVM, s:String, len:Int) : Void;
 
-    // @:native('sq_pushuserpointer')
-    // static function pushuserpointer(v:HSQUIRRELVM, p:SQUserPointer) : Void;
+    @:native('sq_pushuserpointer')
+    static function pushuserpointer(v:HSQUIRRELVM, p:SQUserPointer) : Void;
 
-    // @:native('sq_setbyhandle')
-    // static function setbyhandle(v:HSQUIRRELVM, idx:Int, handle:HSQMEMBERHANDLE) : SQRESULT;
+    @:native('linc::squirrel::setbyhandle')
+    static function setbyhandle(v:HSQUIRRELVM, idx:Int, handle:HSQMEMBERHANDLE) : SQRESULT;
 
     @:native('sq_setclassudsize')
     static function setclassudsize(v:HSQUIRRELVM, idx:Int, udsize:Int) : SQRESULT;
 
-    // @:native('sq_setinstanceup')
-    // static function setinstanceup(v:HSQUIRRELVM, idx:Int, up:SQUserPointer) : SQRESULT;
+    @:native('sq_setinstanceup')
+    static function setinstanceup(v:HSQUIRRELVM, idx:Int, up:SQUserPointer) : SQRESULT;
 
     @:native('sq_setnativeclosurename')
     static function setnativeclosurename(v:HSQUIRRELVM, idx:Int, name:String) : SQRESULT;
@@ -226,8 +234,8 @@ extern class SQ {
     // @:native('sq_setreleasehook')
     // static function setreleasehook(v:HSQUIRRELVM, idx:Int, hook:SQRELEASEHOOK) : Void;
 
-    // @:native('sq_settypetag')
-    // static function settypetag(v:HSQUIRRELVM, idx:Int, typetag:SQUserPointer) : SQRESULT;
+    @:native('sq_settypetag')
+    static function settypetag(v:HSQUIRRELVM, idx:Int, typetag:SQUserPointer) : SQRESULT;
 
     @:native('sq_tobool')
     static function tobool(v:HSQUIRRELVM, idx:Int,  b:Bool) : Void; // TODO
@@ -250,8 +258,8 @@ extern class SQ {
     @:native('sq_getlasterror')
     static function getlasterror(v:HSQUIRRELVM) : SQRESULT;
 
-    // @:native('sq_getlocal')
-    // static function getlocal(v:HSQUIRRELVM, level:SQUnsignedInteger, nseq:SQUnsignedInteger) : String;
+    @:native('linc::squirrel::getlocal')
+    static function getlocal(v:HSQUIRRELVM, level:UInt, nseq:UInt) : String;
 
     @:native('sq_reseterror')
     static function reseterror(v:HSQUIRRELVM) : Void;
@@ -358,10 +366,51 @@ extern class SQ {
 
 
 // Bytecode serialization
-    // TODO
+
+    // @:native('sq_readclosure')
+    // static function readclosure(v:HSQUIRRELVM, readf:SQREADFUNC, up:SQUserPointer) : SQRESULT;
+
+    // @:native('sq_writeclosure')
+    // static function writeclosure(v:HSQUIRRELVM, writef:SQWRITEFUNC, up:SQUserPointer) : SQRESULT;
+
 
 // Raw object handling
-    // TODO
+
+    @:native('sq_addref')
+    static function addref(v:HSQUIRRELVM, po:HSQOBJECT) : Void;
+
+    @:native('sq_getobjtypetag')
+    static function getobjtypetag(o:HSQOBJECT, typetag:SQUserPointer) : Void;
+
+    @:native('sq_getrefcount')
+    static function getrefcount(v:HSQUIRRELVM, po:HSQOBJECT) : UInt;
+
+    @:native('linc::squirrel::getstackobj')
+    static function getstackobj(v:HSQUIRRELVM, idx:Int) : HSQOBJECT;
+
+    @:native('linc::squirrel::objtobool')
+    static function objtobool(po:HSQOBJECT) : Bool;
+
+    @:native('sq_objtofloat')
+    static function objtofloat(po:HSQOBJECT) : Float;
+
+    @:native('sq_objtointeger')
+    static function objtointeger(po:HSQOBJECT) : Int;
+
+    @:native('linc::squirrel::objtostring')
+    static function objtostring(po:HSQOBJECT) : String;
+
+    @:native('sq_objtouserpointer')
+    static function objtouserpointer(po:HSQOBJECT) : SQUserPointer;
+
+    @:native('sq_pushobject')
+    static function pushobject(v:HSQUIRRELVM, po:HSQOBJECT) : Void;
+
+    @:native('linc::squirrel::hx_sq_release')
+    static function release(v:HSQUIRRELVM, po:HSQOBJECT) : Bool;
+
+    @:native('sq_resetobject')
+    static function resetobject(po:HSQOBJECT) : Void;
 
 
 // Garbage Collector
@@ -376,19 +425,24 @@ extern class SQ {
     static function resurrectunreachable(v:HSQUIRRELVM) : SQRESULT;
 
 
-
-
-    @:native('SQ_FAILED')
-    static function FAILED(n:Int) : Bool;
-
-    @:native('SQ_SUCCEEDED')
-    static function SUCCEEDED(n:Int) : Bool;
-
 // Debug interface
-    // TODO
+
+    @:native('linc::squirrel::getfunctioninfo') // is it works ?
+    static function getfunctioninfo(v:HSQUIRRELVM, level:Int) : SQFunctionInfo;
+
+    @:native('sq_setdebughook')
+    static function setdebughook(v:HSQUIRRELVM) : Void;
+
+    // @:native('sq_setnativedebughook')
+    // static function setnativedebughook(v:HSQUIRRELVM, hook:SQDEBUGHOOK) : Void;
+
+    @:native('linc::squirrel::stackinfos')
+    static function stackinfos(v:HSQUIRRELVM, level:Int) : SQStackInfos;
 
 
-    // unofficial API helpers
+
+
+// unofficial API helpers
 
     static inline function init_callbacks(vm:HSQUIRRELVM) : Void {
         SQ.set_callbacks_function(cpp.Callable.fromStaticFunction(SQ_helper.callback_handler));
@@ -482,10 +536,43 @@ private class SQ_helper {
 
 }
 
-@:include('linc_squirrel.h')
-@:native('::cpp::Reference<SQVM>')
-private extern class SQVM {}
-typedef HSQUIRRELVM = SQVM;
+
+@:include('linc_squirrel.h') @:native("SQObjectValue")
+private extern class SQObjectValue {}
+
+@:include('linc_squirrel.h') 
+@:native("::cpp::Reference<SQObject>")
+private extern class SQObject {
+    var _type:SQObjectType;
+    var _unVal:SQObjectValue;
+}
+typedef HSQOBJECT = SQObject;
+
+@:include('linc_squirrel.h') 
+@:native('::cpp::Reference<SQUserPointer>')
+extern class SQUserPointer {}
+
+typedef SQClosureInfo = {
+    nparams:UInt,
+    nfreevars:UInt
+}
+
+typedef SQFunctionInfo = {
+    funcid:SQUserPointer,
+    name:String,
+    source:String
+}
+
+typedef SQStackInfos = {
+    funcname:String,
+    source:String,
+    line:Int
+}
+
+typedef HSQMEMBERHANDLE = {
+    _static:Bool,
+    _index:Int
+}
 
 typedef SQRESULT = Int;
 

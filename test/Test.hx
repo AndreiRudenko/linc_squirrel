@@ -1,5 +1,6 @@
 import squirrel.SQ;
 import squirrel.SQstd;
+import squirrel.SQVM;
 
 class Test {
 

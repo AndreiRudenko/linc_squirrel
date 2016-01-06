@@ -13,12 +13,13 @@ This library works with the Haxe cpp target only.
 
 See test/Test.hx
 
-Be sure to read the Squirrel documentation
-http://squirrel-lang.org/doc/squirrel3.html
-http://wiki.squirrel-lang.org/
+Be sure to read the Squirrel documentation  
+http://squirrel-lang.org/doc/squirrel3.html  
+http://wiki.squirrel-lang.org/  
 
 ```haxe
 import squirrel.SQ;
+import squirrel.SQVM;
 import squirrel.SQstd;
 
 class Example {

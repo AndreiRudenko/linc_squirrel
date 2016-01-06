@@ -17,7 +17,7 @@
 #include "..\lib\SQUIRREL3\include\sqstdaux.h"
 
 namespace linc {
-    typedef ::cpp::Function < int(::cpp::Reference<SQVM>, ::String) > SqCallbackFN;
+    typedef ::cpp::Function < int(::cpp::Pointer<SQVM>, ::String) > SqCallbackFN;
 
     namespace squirrel {
         extern SQFloat getfloat(HSQUIRRELVM vm, SQInteger sv);
@@ -25,6 +25,20 @@ namespace linc {
         extern ::String getstring(HSQUIRRELVM vm, SQInteger sv);
         extern SQBool getbool(HSQUIRRELVM vm, SQInteger sv);
 		extern void setprintfunc(HSQUIRRELVM v);
+        extern Dynamic getclosureinfo(HSQUIRRELVM v, SQInteger idx);
+        extern Dynamic getmemberhandle(HSQUIRRELVM v, SQInteger idx);
+        extern SQRESULT getbyhandle(HSQUIRRELVM v, SQInteger idx, Dynamic handle);
+        extern SQRESULT setbyhandle(HSQUIRRELVM v, SQInteger idx, Dynamic handle);
+        extern ::String getlocal(HSQUIRRELVM vm, SQUnsignedInteger level, SQUnsignedInteger nseq);
+        extern void setcompilererrorhandler(HSQUIRRELVM vm);
+
+        extern HSQOBJECT getstackobj(HSQUIRRELVM v, SQInteger idx);
+        extern SQBool objtobool(HSQOBJECT po);
+        extern ::String objtostring(HSQOBJECT obj);
+        extern SQBool hx_sq_release(HSQUIRRELVM v, HSQOBJECT obj);
+
+        extern Dynamic getfunctioninfo(HSQUIRRELVM v, SQInteger idx);
+        extern Dynamic stackinfos(HSQUIRRELVM v, SQInteger idx);
 
         extern void set_callbacks_function(SqCallbackFN fn);
         extern void add_callback_function(HSQUIRRELVM vm, const char *fname, SQInteger nparams, const SQChar *typemask);

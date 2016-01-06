@@ -1,6 +1,7 @@
 package squirrel;
 
 import squirrel.SQ;
+import squirrel.SQVM;
 
 class SQ_Convert{
 
@@ -119,6 +120,43 @@ class SQ_Convert{
         }
         // trace("\n");
         return hv;
+    }
+
+    public static inline function getObjType(ot:SQObjectType) {
+        switch(ot) {
+            case OT_NULL:
+                trace("null\n");
+            case OT_BOOL:
+                trace("bool\n");
+            case OT_INTEGER:
+                trace("integer\n");
+            case OT_FLOAT:
+                trace("float\n");
+            case OT_STRING:
+                trace("string\n");
+            case OT_TABLE:
+                trace("table\n");
+            case OT_ARRAY:
+                trace("array\n");
+            case OT_USERDATA:
+                trace("userdata\n");
+            case OT_CLOSURE:
+                trace("closure(function)\n");
+            case OT_NATIVECLOSURE:
+                trace("native closure(C function)\n");
+            case OT_GENERATOR:
+                trace("generator\n");
+            case OT_USERPOINTER:
+                trace("userpointer\n");
+            case OT_CLASS:
+                trace("class\n");
+            case OT_INSTANCE:
+                trace("instance\n");
+            case OT_WEAKREF:
+                trace("weak reference\n");
+            default:
+                trace("return value not supported\n");
+        }
     }
 
     public static function sq_array_to_haxe(vm:HSQUIRRELVM):Array<Dynamic> {

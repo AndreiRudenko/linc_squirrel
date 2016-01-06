@@ -1,6 +1,7 @@
 package squirrel;
 
 import squirrel.SQ;
+import squirrel.SQVM;
 
 @:include('linc_squirrel.h')
 extern class SQstd {
