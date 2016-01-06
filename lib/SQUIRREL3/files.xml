@@ -1,0 +1,39 @@
+<xml>
+
+    <files id="native-toolkit-squirrel" >
+
+        <compilerflag value="-I${NATIVE_TOOLKIT_PATH}/SQUIRREL3/include/"/>
+    	<compilerflag value="-DSQUSEDOUBLE"/>
+
+		<file name="${NATIVE_TOOLKIT_PATH}/SQUIRREL3/squirrel/sqapi.cpp" />
+		<file name="${NATIVE_TOOLKIT_PATH}/SQUIRREL3/squirrel/sqbaselib.cpp" />
+		<file name="${NATIVE_TOOLKIT_PATH}/SQUIRREL3/squirrel/sqfuncstate.cpp" />
+		<file name="${NATIVE_TOOLKIT_PATH}/SQUIRREL3/squirrel/sqdebug.cpp" />
+		<file name="${NATIVE_TOOLKIT_PATH}/SQUIRREL3/squirrel/sqlexer.cpp" />
+		<file name="${NATIVE_TOOLKIT_PATH}/SQUIRREL3/squirrel/sqobject.cpp" />
+		<file name="${NATIVE_TOOLKIT_PATH}/SQUIRREL3/squirrel/sqcompiler.cpp" />
+		<file name="${NATIVE_TOOLKIT_PATH}/SQUIRREL3/squirrel/sqstate.cpp" />
+		<file name="${NATIVE_TOOLKIT_PATH}/SQUIRREL3/squirrel/sqtable.cpp" />
+		<file name="${NATIVE_TOOLKIT_PATH}/SQUIRREL3/squirrel/sqmem.cpp" />
+		<file name="${NATIVE_TOOLKIT_PATH}/SQUIRREL3/squirrel/sqvm.cpp" />
+		<file name="${NATIVE_TOOLKIT_PATH}/SQUIRREL3/squirrel/sqclass.cpp" />
+
+    </files>
+
+    <files id="native-toolkit-sqstdlib" >
+    	
+        <compilerflag value="-I${NATIVE_TOOLKIT_PATH}/SQUIRREL3/include/"/>
+    	<compilerflag value="-DSQUSEDOUBLE"/>
+    	
+		<file name="${NATIVE_TOOLKIT_PATH}/SQUIRREL3/sqstdlib/sqstdblob.cpp" />
+		<file name="${NATIVE_TOOLKIT_PATH}/SQUIRREL3/sqstdlib/sqstdio.cpp" />
+		<file name="${NATIVE_TOOLKIT_PATH}/SQUIRREL3/sqstdlib/sqstdstream.cpp" />
+		<file name="${NATIVE_TOOLKIT_PATH}/SQUIRREL3/sqstdlib/sqstdmath.cpp" />
+		<file name="${NATIVE_TOOLKIT_PATH}/SQUIRREL3/sqstdlib/sqstdsystem.cpp" />
+		<file name="${NATIVE_TOOLKIT_PATH}/SQUIRREL3/sqstdlib/sqstdstring.cpp" />
+		<file name="${NATIVE_TOOLKIT_PATH}/SQUIRREL3/sqstdlib/sqstdaux.cpp" />
+		<file name="${NATIVE_TOOLKIT_PATH}/SQUIRREL3/sqstdlib/sqstdrex.cpp" />
+
+    </files>
+
+</xml>

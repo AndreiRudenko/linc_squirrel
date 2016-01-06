@@ -1,23 +1,23 @@
 <xml>
+    <set name="NATIVE_TOOLKIT_PATH" value="${LINC_SQUIRREL_PATH}/lib/" />
+    <include name="${LINC_SQUIRREL_PATH}/lib/SQUIRREL3/files.xml"/>
 
     <files id='haxe'>
 
+        <!-- <compilerflag value='-I${LINC_SQUIRREL_PATH}/lib/'/> -->
         <compilerflag value='-I${LINC_SQUIRREL_PATH}/linc/'/>
+
+        <!-- <compilerflag value="-I${NATIVE_TOOLKIT_PATH}/SQUIRREL3/include/"/> -->
+
+        <include name="${LINC_SQUIRREL_PATH}/lib/SQUIRREL3/defines.xml"/>
+
         <file name='${LINC_SQUIRREL_PATH}linc/linc_squirrel.cpp' />
 
     </files>
 
-    <files id="__main__">
-        <compilerflag value='-I${LINC_SQUIRREL_PATH}linc/'/>
-    </files>
-    
     <target id="haxe">
-        <section if="windows">
-            <lib name='${LINC_SQUIRREL_PATH}lib/SQUIRREL3/lib/Windows/squirrel.lib' if='HXCPP_M32' />
-            <lib name='${LINC_SQUIRREL_PATH}lib/SQUIRREL3/lib/Windows/sqstdlib.lib' if='HXCPP_M32' />
-            <lib name='${LINC_SQUIRREL_PATH}lib/SQUIRREL3/lib/Windows64/squirrel.lib' if='HXCPP_M64' />
-            <lib name='${LINC_SQUIRREL_PATH}lib/SQUIRREL3/lib/Windows64/sqstdlib.lib' if='HXCPP_M64' />
-        </section>
+        <files id="native-toolkit-squirrel"/>
+        <files id="native-toolkit-sqstdlib"/>
     </target>
 
 </xml>

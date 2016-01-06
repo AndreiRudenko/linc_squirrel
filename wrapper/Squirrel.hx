@@ -2,6 +2,8 @@ package wrapper;
 
 import squirrel.SQ;
 import squirrel.SQstd;
+import squirrel.SQVM;
+import squirrel.SQ_Convert;
 
 #if cpp
 import cpp.Lib;
@@ -16,8 +18,8 @@ class Squirrel {
     /**
      * Creates a new Squirrel vm state
      */
-    public function new(){
-        create();
+    public function new(?initsize:Int){
+        create(initsize);
     }
 
     /**
@@ -28,11 +30,12 @@ class Squirrel {
     }
 
     /**
-     * Close Squirrel vm state
+     * Create Squirrel vm state
+     * initsize : the size of the stack in slots(number of objects)
      */
-    public function create(){
+    public function create(initsize:Int = 1024){
         if(vm != null) close();
-        vm = _create();
+        vm = _create(initsize);
     }
 
     /**
@@ -73,7 +76,7 @@ class Squirrel {
     public function setVar(vname:String, v:Dynamic):Void {
         SQ.pushroottable(vm);
         SQ.pushstring(vm, vname, -1);
-        SQConvert.haxe_value_to_sq(vm, v);
+        SQ_Convert.haxe_value_to_sq(vm, v);
         SQ.createslot(vm, -3);
         SQ.poptop(vm);
     }
@@ -84,7 +87,7 @@ class Squirrel {
         SQ.pushroottable(vm); //pushes the global table
         SQ.pushstring(vm,vname,-1);
         if(SQ.SUCCEEDED(SQ.get(vm,-2))) { //gets the field 'foo' from the global table
-            hv = SQConvert.sq_value_to_haxe(vm, -1);
+            hv = SQ_Convert.sq_value_to_haxe(vm, -1);
             SQ.poptop(vm);
         }
         SQ.poptop(vm);
@@ -101,13 +104,13 @@ class Squirrel {
     }
 
     // set callback function
-    public function setFunction(fname:String, f:Dynamic, nparams:Int = 0, typemask:String = null):Void {
-        SQ_helper.add_callback(vm, fname, f, nparams, typemask);
+    public function setFunction(fname:String, f:Dynamic, nparams:Int = 0, typemask:String = null):Bool {
+        return SQ.register(vm, fname, f, nparams, typemask);
     }
 
     // remove callback function
     public function removeFunction(fname:String):Void {
-        SQ_helper.remove_callback(vm, fname);
+        SQ.unregister(vm, fname);
     }
 
     /**
@@ -128,7 +131,7 @@ class Squirrel {
             SQ.getlasterror(vm);
             trace("\nSQ EXECUTE ERROR [" + SQ.getstring(vm, -1) + "]");
         } else if(retVal){
-            hv = SQConvert.sq_value_to_haxe(vm, -1);
+            hv = SQ_Convert.sq_value_to_haxe(vm, -1);
         }
 
         SQ.settop(vm, oldtop);
@@ -158,7 +161,7 @@ class Squirrel {
                     SQ.getlasterror(vm);
                     trace("\nSQ FUNCTION CALL ERROR [" + SQ.getstring(vm, -1) + "]");
                 } else if(retVal){
-                    hv = SQConvert.sq_value_to_haxe(vm, -1);
+                    hv = SQ_Convert.sq_value_to_haxe(vm, -1);
                 }
             } else {
                 if(Std.is(args, Array)){
@@ -166,7 +169,7 @@ class Squirrel {
                     var arr:Array<Dynamic>;
                     arr = cast args;
                     for (a in arr) {
-                        if(SQConvert.haxe_value_to_sq(vm, a)){
+                        if(SQ_Convert.haxe_value_to_sq(vm, a)){
                             nargs++;
                         }
                     }
@@ -174,16 +177,16 @@ class Squirrel {
                         SQ.getlasterror(vm);
                         trace("\nSQ FUNCTION CALL ERROR [" + SQ.getstring(vm, -1) + "]");
                     } else if(retVal){
-                        hv = SQConvert.sq_value_to_haxe(vm, -1);
+                        hv = SQ_Convert.sq_value_to_haxe(vm, -1);
                     }
                 } else {
-                    if(SQConvert.haxe_value_to_sq(vm, args)){
+                    if(SQ_Convert.haxe_value_to_sq(vm, args)){
 
                         if(SQ.FAILED(SQ.call(vm, 2, retVal, true))){
                             SQ.getlasterror(vm);
                             trace("\nSQ FUNCTION CALL ERROR [" + SQ.getstring(vm, -1) + "]");
                         } else if(retVal){
-                            hv = SQConvert.sq_value_to_haxe(vm, -1);
+                            hv = SQ_Convert.sq_value_to_haxe(vm, -1);
                         }
                     } else {
                         trace('unknown type!');
@@ -241,15 +244,27 @@ class Squirrel {
 
 // helpers
 
-    function _create():HSQUIRRELVM {
+    public static inline function stackDump(vm:HSQUIRRELVM){
+        var top:Int = SQ.gettop(vm);
+        trace("---------------- Stack Dump ----------------");
+        // trace("top = " + top);
+        while(top > 0){
+            trace( top + " " + SQ_Convert.sq_value_to_haxe(vm, top));
+            top--;
+        }
+        trace("---------------- Stack Dump Finished ----------------");
+    }
+
+    function _create(initsize:Int):HSQUIRRELVM {
         // trace('create new Squirrel VM');
-        var _vm:HSQUIRRELVM = SQ.open(1024);
+        var _vm:HSQUIRRELVM = SQ.open(initsize);
 
         SQ.pushroottable(_vm); //push the root table(were the globals of the script will be stored)
 
         SQstd.seterrorhandlers(_vm); //registers the default error handlers
         SQ.setprintfunc(_vm); //sets the print function
-        SQ_helper.init_callbacks(_vm); // init callbacks
+
+        SQ.init_callbacks(_vm); // init callbacks
 
         SQ.poptop(_vm); //pops the root table
         return _vm;

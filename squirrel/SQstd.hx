@@ -1,14 +1,9 @@
 package squirrel;
 
 import squirrel.SQ;
+import squirrel.SQVM;
 
-@:keep
 @:include('linc_squirrel.h')
-#if !display
-@:build(linc.Linc.touch())
-@:build(linc.Linc.xml('squirrel'))
-#end
-
 extern class SQstd {
 
 // The Input/Output library
