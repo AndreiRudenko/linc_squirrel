@@ -22,10 +22,10 @@ namespace linc {
             return ret;
         }
         
-        SQBool getbool(HSQUIRRELVM vm, SQInteger sv){
+        bool getbool(HSQUIRRELVM vm, SQInteger sv){
             SQBool b = 0;
             sq_getbool(vm, sv, &b);
-            return b != 0 ? true : false;
+            return b == 0 ? false : true;
         }
         
 
@@ -41,16 +41,44 @@ namespace linc {
             return ::String(ret);
         }
 
+        std::string vformat (const char *fmt, va_list ap) {
+            size_t size = 1024;
+            char stackbuf[1024];
+            std::vector<char> dynamicbuf;
+            char *buf = &stackbuf[0];
 
+            while (1) {
+                int needed = vsnprintf (buf, size, fmt, ap);
+
+                if (needed <= (int)size && needed >= 0) {
+                    return std::string (buf, (size_t) needed);
+                }
+
+                size = (needed > 0) ? (needed+1) : (size*2);
+                dynamicbuf.resize (size);
+                buf = &dynamicbuf[0];
+            }
+        }
+        
+        static HxPrintFN print_fn = 0;
        	void printfunc(HSQUIRRELVM v, const SQChar *s, ...) { 
+
             va_list arglist; 
             va_start(arglist, s); 
-            vprintf(s, arglist); 
+            // vprintf(s, arglist); 
+
+            // to haxe string
+            std::string buf = vformat (s, arglist);
+            print_fn(::String(buf.c_str()));
+
             va_end(arglist); 
         } 
 
-        void setprintfunc(HSQUIRRELVM v) {
+
+
+        void setprintfunc(HSQUIRRELVM v, HxPrintFN fn) {
             sq_setprintfunc(v, printfunc, printfunc);
+            print_fn = fn;
         }
 
         Dynamic getclosureinfo(HSQUIRRELVM v, SQInteger idx) {
@@ -91,6 +119,12 @@ namespace linc {
             h._static = handle->__FieldRef(HX_CSTRING("_static")) != true ? 0 : 1;
             return sq_setbyhandle(v, idx, &h);
         }
+        
+        SQUserPointer getuserpointer(HSQUIRRELVM v, SQInteger idx) {
+            SQUserPointer up;
+            sq_getuserpointer(v, idx, &up);
+            return up;
+        }
 
         ::String getlocal(HSQUIRRELVM vm, SQUnsignedInteger level, SQUnsignedInteger nseq){
             const SQChar* ret = sq_getlocal(vm, level, nseq);
@@ -120,7 +154,7 @@ namespace linc {
             return obj;
         }
 
-        SQBool objtobool(HSQOBJECT obj){
+        bool objtobool(HSQOBJECT obj){
             SQBool b = sq_objtobool(&obj);
             return b != 0 ? true : false;
         }
@@ -134,7 +168,7 @@ namespace linc {
             return ::String(ret);
         }
 
-        SQBool hx_sq_release(HSQUIRRELVM v, HSQOBJECT obj){
+        bool hx_sq_release(HSQUIRRELVM v, HSQOBJECT obj){
             SQBool b = sq_release(v, &obj);
             return b != 0 ? true : false;
         }

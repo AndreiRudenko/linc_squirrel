@@ -18,24 +18,28 @@
 
 namespace linc {
     typedef ::cpp::Function < int(::cpp::Pointer<SQVM>, ::String) > SqCallbackFN;
+    typedef ::cpp::Function < int(String) > HxPrintFN;
 
     namespace squirrel {
         extern SQFloat getfloat(HSQUIRRELVM vm, SQInteger sv);
         extern SQInteger getinteger(HSQUIRRELVM vm, SQInteger sv);
         extern ::String getstring(HSQUIRRELVM vm, SQInteger sv);
-        extern SQBool getbool(HSQUIRRELVM vm, SQInteger sv);
-		extern void setprintfunc(HSQUIRRELVM v);
+        extern bool getbool(HSQUIRRELVM vm, SQInteger sv);
+		extern void setprintfunc(HSQUIRRELVM v, HxPrintFN fn);
+
         extern Dynamic getclosureinfo(HSQUIRRELVM v, SQInteger idx);
         extern Dynamic getmemberhandle(HSQUIRRELVM v, SQInteger idx);
         extern SQRESULT getbyhandle(HSQUIRRELVM v, SQInteger idx, Dynamic handle);
         extern SQRESULT setbyhandle(HSQUIRRELVM v, SQInteger idx, Dynamic handle);
+        extern SQUserPointer getuserpointer(HSQUIRRELVM v, SQInteger idx);
+
         extern ::String getlocal(HSQUIRRELVM vm, SQUnsignedInteger level, SQUnsignedInteger nseq);
         extern void setcompilererrorhandler(HSQUIRRELVM vm);
 
         extern HSQOBJECT getstackobj(HSQUIRRELVM v, SQInteger idx);
-        extern SQBool objtobool(HSQOBJECT po);
+        extern bool objtobool(HSQOBJECT po);
         extern ::String objtostring(HSQOBJECT obj);
-        extern SQBool hx_sq_release(HSQUIRRELVM v, HSQOBJECT obj);
+        extern bool hx_sq_release(HSQUIRRELVM v, HSQOBJECT obj);
 
         extern Dynamic getfunctioninfo(HSQUIRRELVM v, SQInteger idx);
         extern Dynamic stackinfos(HSQUIRRELVM v, SQInteger idx);

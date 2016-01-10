@@ -66,7 +66,11 @@ extern class SQ {
     static function setforeignptr(v:HSQUIRRELVM, p:SQUserPointer) : Void;
 
     @:native('linc::squirrel::setprintfunc')
-    static function setprintfunc(v:HSQUIRRELVM) : Void;
+    static function _setprintfunc(v:HSQUIRRELVM, f:cpp.Callable<String->Int>) : Void;
+
+    static inline function setprintfunc(v:HSQUIRRELVM) : Void {
+        _setprintfunc(v, cpp.Callable.fromStaticFunction(SQ_helper.print_function));
+    }
 
     @:native('sq_setroottable')
     static function setroottable(v:HSQUIRRELVM) : Void;
@@ -179,9 +183,9 @@ extern class SQ {
 
     @:native('sq_getuserdata')
     static function getuserdata(v:HSQUIRRELVM, idx:Int, p:SQUserPointer, typetag:SQUserPointer) : SQRESULT;
-
-    @:native('sq_getuserpointer')
-    static function getuserpointer(v:HSQUIRRELVM, idx:Int, p:SQUserPointer) : SQRESULT;
+    
+    @:native('linc::squirrel::getuserpointer')
+    static function getuserpointer(v:HSQUIRRELVM, idx:Int) : SQUserPointer;
 
     @:native('sq_newarray')
     static function newarray(v:HSQUIRRELVM, sq_getsize:Int) : Void;
@@ -325,8 +329,8 @@ extern class SQ {
     @:native('sq_getweakrefval')
     static function getweakrefval(v:HSQUIRRELVM, idx:Int) : SQRESULT;
 
-    @:native('sq_instanceof')
-    static function instanceof(v:HSQUIRRELVM, idx:Int) : SQRESULT;
+    @:native('sq_instanceof') // TODO: return bool from cpp
+    static function instanceof(v:HSQUIRRELVM) : Bool;
 
     @:native('sq_newmember')
     static function newmember(v:HSQUIRRELVM, idx:Int, bstatic:Bool) : SQRESULT;
@@ -448,6 +452,7 @@ extern class SQ {
         SQ.set_callbacks_function(cpp.Callable.fromStaticFunction(SQ_helper.callback_handler));
     }
 
+
     // register callback function
     // nparams : 
     // 1 = 0 arguments;
@@ -473,6 +478,13 @@ extern class SQ {
         SQ.remove_callback_function(vm, fname);
     }
 
+    // clear callbacks 
+    static inline function clear_callbacks(vm:HSQUIRRELVM) : Void {
+        for (fname in SQ_helper.callbacks.keys()) {
+            SQ.remove_callback_function(vm, fname);
+            SQ_helper.callbacks.remove(fname);
+        }
+    }
 
     @:native('linc::squirrel::set_callbacks_function')
     static function set_callbacks_function(f:cpp.Callable<HSQUIRRELVM->String->Int>) : Void;
@@ -491,6 +503,13 @@ extern class SQ {
 private class SQ_helper {
 
     public static var callbacks:Map<String, Dynamic> = new Map();
+
+    public static inline function print_function(str:String):Int {
+        // SQdebug.trace("SQ print: " + str);
+        SQdebug.trace(str);
+        return 0;
+    }
+
 
     public static inline function callback_handler(vm:HSQUIRRELVM, fname:String):Int {
         var cbf = callbacks.get(fname);
@@ -534,6 +553,12 @@ private class SQ_helper {
     } //callback_handler
 
 
+}
+
+class SQdebug {
+    public static dynamic function trace( v : String, ?inf:haxe.PosInfos) : Void {  // set your custom trace
+        trace(v);
+    }
 }
 
 
